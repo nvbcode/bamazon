@@ -90,22 +90,27 @@ $(document).ready(function () {
 
     }
 
-    if(cart.length === 0) {
-      cart.push(items);
+    if (cart.length === 0) {
+      return cart.push(items);
+
     }
-    else if(cart.length !== 0) {
-    for (let i = 0; i < cart.length; i++) {
-      console.log('entered Loop');
-      if (cart[i].hasOwnProperty(productName)) {
-        console.log('has prop');
-        cart[i].stock_inCart += items.stock_inCart;
-      } else {
-        console.log('Does not have prop');
+    else if (cart.length !== 0) {
+      for (let i = 0; i < cart.length; i++) {
+        console.log('entered Loop');
+        console.log(productName);
+        if (cart[i].product_name === productName) {
+          console.log('has prop');
+          cart[i].stock_inCart = parseInt(cart[i].stock_inCart) + parseInt(items.stock_inCart);
+          return
+        }
+      };
+      console.log('Does not have prop');
       cart.push(items);
       console.log(cart);
-      }
+      return
     }
-  }
-    });
+
+
+  });
 
 });
