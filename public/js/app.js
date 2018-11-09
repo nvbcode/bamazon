@@ -1,82 +1,68 @@
 $(document).ready(function () {
   let cart = [];
   const render = function () {
+    $('#mainTable').empty();
     $.ajax({
       method: 'GET',
       url: '/api/product'
     }).then(function (data) {
       console.log(data);
       for (let i = 0; i < data.length; i++) {
-        $('.productsList').append(`
-        
-        <div class='row text-center d-flex align-items-center'>
-          <div class='col-sm-2'>
-            <form>
-              <div class='form-group'>
-                  <input class="form-control" type='text'id="qty">
-              </div>
-            </form>
+        $('#mainTable').append(`
+        <tr scope ="row">
+        <th scope ="row" id='product'>${data[i].product_name}</th>
+        <td id='productNumber'>${data[i].id}</td>
+        <td id = 'descrip'>${data[i].description}</td>
+        <td id = 'price'>${data[i].price}</td>
+        <td id = 'stock'>${data[i].stock_quantity}</td>
+        <td class = 'qtyCart'>
+         <form>
+          <div class ='form-group'>
+            <input type ="text" id = 'qty'>
           </div>
-
-          <div class='text-center col-sm-2' id='product'>
-            <h5>${data[i].product_name}</h5>
-          </div>
-
-          <div class='text-center col-sm-2' id='descrip'>
-              <h5>${data[i].description}</h5>
-          </div>
-
-          <div class='text-center col-sm-2' id='stock'>
-              <h5>${data[i].stock_quantity}</h5>
-          </div>
-
-          <div class='text-center col-sm-2' id='price'>
-              <h5>${data[i].price}</h5>
-          </div>
-
-          <div class='text-center col-sm-2' id='Add'>
-              <button class="btn btn-inline btn-success px-1 mx-0">Add to Cart</button>
-          </div>
-
-      </div>
-  <hr>`)
+          </form>
+        </td>
+        <td>  <button class="btn btn-inline btn-success">Add to Cart</button> </td>
+      </tr>`);
       }
     })
   };
 
-  // const qtyValue = function(){
-  //   $(document).load(), 'button', clickHandler)
-  // };
+
   render();
 
-  // const clickHandler = function (event) {
-  //   event.preventDefault();
-  //   let btnValue = $(this).val().trim();
-  //   console.log(btnValue);
-  //   let qtyValue = $(`'#${btnValue}'`).val();
-  //   console.log(qtyValue);
-  // };
-
   const checkout = function () {
-    console.warn("In checkout")
-    $.ajax({
-      method:"PUT",
-      url:"/api/product",
-      data: cart
-    }).then(function(res){
-      console.log("success!");
-    })
-  }
+    console.log(cart);
+    for (let i = 0; i < cart.length; i++) {
+      if (parseInt(cart[i].stock_inCart) <= parseInt(cart[i].stock_quantity)) {
+        cart[i].stock_quantity = (cart[i].stock_quantity - cart[i].stock_inCart);
+      } else if (parseInt(cart[i].stock_inCart) > parseInt(cart[i].stock_quantity)) {
+        return alert('Not enough stock!');
+      }
+      console.warn(cart);
+      $.ajax({
+        method: "PUT",
+        url: `/api/product/${cart[i].id}`,
+        data: cart[i]
+      }).then(function (res) {
+        console.log("success!");
+        console.log(res);
+
+      })
+    }
+    location.reload();
+  };
+
 
   const addModal = function () {
-    $('.modalTable').empty();
+    $('#modalTable').empty();
     for (let i = 0; i < cart.length; i++)
       $('#modalTable').append(`
         <tr scope ="row">
         <th scope ="row">${cart[i].product_name}</th>
         <td>${cart[i].description}</td>
         <td>${cart[i].price}</td>
-        <td>${cart[i].stock_quantity}</td>
+        <td>${cart[i].stock_inCart}</td>
       </tr>`);
     $('#everythingModal').modal('show');
   };
@@ -84,18 +70,42 @@ $(document).ready(function () {
   $('.checkoutButton').on('click', checkout)
   $('#addCart').on('click', addModal)
 
-  $('.productsList').on('click', 'button', function (event) {
+  $('#mainTable').on('click', '.btn', function (event) {
     event.preventDefault();
+    let inCart = $(this).parents('tr').find('#qty').val();
+    let stockQty = $(this).parents('tr').find('#stock').text();
+    let productName = $(this).parents('tr').find('#product').text();
+    stockQty = parseInt(stockQty);
+    if (inCart > stockQty) {
+      return alert('Not enough in Stock')
+    }
+
     const items = {
-      uid: $(this).parents('.row').find('#product').val(),
-      product_name: $(this).parents('.row').find('#product').text(),
-      description: $(this).parents('.row').find('#descrip').text(),
-      price: $(this).parents('.row').find('#stock').text(),
-      stock_quantity: $(this).parents('.row').find('#qty').val()
+      id: $(this).parents('tr').find('#productNumber').text(),
+      product_name: $(this).parents('tr').find('#product').text(),
+      description: $(this).parents('tr').find('#descrip').text(),
+      price: $(this).parents('tr').find('#price').text(),
+      stock_quantity: $(this).parents('tr').find('#stock').text(),
+      stock_inCart: $(this).parents('tr').find('#qty').val()
 
     }
-    cart.push(items);
-    console.log(cart);
-  });
+
+    if(cart.length === 0) {
+      cart.push(items);
+    }
+    else if(cart.length !== 0) {
+    for (let i = 0; i < cart.length; i++) {
+      console.log('entered Loop');
+      if (cart[i].hasOwnProperty(productName)) {
+        console.log('has prop');
+        cart[i].stock_inCart += items.stock_inCart;
+      } else {
+        console.log('Does not have prop');
+      cart.push(items);
+      console.log(cart);
+      }
+    }
+  }
+    });
 
 });

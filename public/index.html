@@ -22,7 +22,7 @@
 
     <nav class='navbar navbar-dark bg-dark'>
         <a class='navbar-brand' href='#'>Bamazon</a>
-        <button class='btn justify-content-end'id ="addCart">Cart</button>
+        <button class='btn justify-content-end' id="addCart">Cart</button>
     </nav>
 
     <div class="container">
@@ -30,38 +30,21 @@
         <div class='card my-4 '>
             <h4 class='card-header'>Items for Sale</h4>
             <div class='card-body text-align-center'>
-                <div class='row '>
-                    <div class='col-sm-2'>
-                        <h5>Qty</h5>
-
-                    </div>
-                    <div class='col-sm-2'>
-                        <h5>Product</h5>
-
-                    </div>
-
-                    <div class='col-sm-2'>
-                        <h5 class="d-inline">Description</h5>
-
-                    </div>
-                    <div class='col-sm-2'>
-                        <h5>In Stock</h5>
-
-                    </div>
-                    <div class='col-sm-2'>
-                        <h5>Price</h5>
-
-                    </div>
-                    <div class='col-sm-2'>
-                        <h5>Add Column</h5>
-
-                    </div>
-                </div>
-                <hr>
-                <!-- area to be filled from DB -->
-                <div class="productsList">
-
-                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Product Name</th>
+                            <th scope ='col'>#</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Stock Quantity</th>
+                            <th scope="col">Qty</th>
+                            <th scope="col">Add to Cart</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mainTable">
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -75,19 +58,19 @@
                     </button>
                 </div>
                 <div class="modal-body text-align">
-                    <table class ="table">
+                    <table class="table">
                         <thead>
-                        <tr>
-                        <!-- <th scope="col">Product ID</th> -->
-                        <th scope="col">Product Name</th>
-                        <th scope="col">Description</th>
-                        <th scope="col">Price</th>
-                        <th scope="col">Quantity in Cart</th>
-                        </tr>
+                            <tr>
+                                <!-- <th scope="col">Product ID</th> -->
+                                <th scope="col">Product Name</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Quantity in Cart</th>
+                            </tr>
                         </thead>
                         <tbody id="modalTable">
                         </tbody>
-                        </table>
+                    </table>
                 </div>
                 <div class='modal-footer'>
                     <button type="button" class='btn btn-secondary checkoutButton' data-dismiss="modal">Checkout</button>
